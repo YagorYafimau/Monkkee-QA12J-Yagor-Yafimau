@@ -1,29 +1,73 @@
-// page-objects/login-page.ts
+import { Page, Locator } from 'playwright';
 
 export class LoginPage {
-  page: any;
+  private page: Page;
 
-  constructor(page: any) {
+  // Локаторы для элементов
+  private emailInput = 'input[name="email"]';
+  private passwordInput = 'input[name="password"]';
+  private submitButton = 'button[type="submit"]';
+  private userMenuButton = 'a.user-menu__btn';
+  private welcomeMessage = '#welcome-message';
+
+  constructor(page: Page) {
     this.page = page;
   }
 
-  // Метод для перехода на страницу логина
+  // Переход на страницу логина
   async goToLoginPage() {
-    await this.page.goto('https://example.com/login'); // Замените на ваш URL страницы логина
+    try {
+      await this.page.goto('https://monkkee.com/app/#/');
+      // await this.page.waitForSelector(this.emailInput, { timeout: 10000 }); // Ожидание появления поля email
+      console.log('Login page loaded');
+    } catch (error) {
+      console.error('Error navigating to login page:', error);
+      throw error; // Бросаем ошибку дальше
+    }
   }
 
-  // Метод для выполнения входа
+  // Логин с использованием email и пароля
   async login(email: string, password: string) {
-    await this.page.fill('input[name="email"]', email); // Замените на селектор для поля email
-    await this.page.fill('input[name="password"]', password); // Замените на селектор для поля password
-    await this.page.click('button[type="submit"]'); // Замените на селектор для кнопки входа
+    await this.page.getByPlaceholder('Email address or alias').fill(email);
+    await this.page.getByPlaceholder('Password').fill(password);
+    await this.page.getByRole('button', { name: 'Login' }).click();
   }
 
-  // Метод для получения сообщения об ошибке
-  async getErrorMessage() {
-    const errorMessage = await this.page.locator(
-      'text=Invalid email or password'
-    ); // Замените на правильный селектор
-    return errorMessage.textContent();
+  // Ожидание появления кнопки меню пользователя (проверка успешного входа)
+  async waitForUserMenuButton() {
+    try {
+      const userMenuLocator: Locator = this.page.locator(this.userMenuButton);
+      await userMenuLocator.waitFor({ state: 'visible', timeout: 20000 });
+      console.log('User menu button is visible');
+    } catch (error) {
+      console.error('Error waiting for user menu button:', error);
+      throw error;
+    }
+  }
+
+  // Ожидание загрузки страницы записей после логина
+  async waitForEntriesPage() {
+    try {
+      await this.page.waitForURL('https://monkkee.com/app/#/entries', {
+        timeout: 20000,
+      });
+      console.log('Entries page loaded');
+    } catch (error) {
+      console.error('Error waiting for entries page:', error);
+      throw error;
+    }
+  }
+
+  // Получение приветственного сообщения после входа
+  async getWelcomeMessage(): Promise<string> {
+    try {
+      const messageLocator: Locator = this.page.locator(this.welcomeMessage);
+      await messageLocator.waitFor({ state: 'visible', timeout: 10000 }); // Ожидание появления сообщения
+      const content = await messageLocator.textContent();
+      return content || 'No welcome message found';
+    } catch (error) {
+      console.error('Error getting welcome message:', error);
+      return 'Error retrieving message';
+    }
   }
 }
