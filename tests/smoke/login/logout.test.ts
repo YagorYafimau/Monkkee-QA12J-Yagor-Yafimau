@@ -1,12 +1,7 @@
 import { test, expect } from '@playwright/test';
-import dotenv from 'dotenv';
-
-// Загружаем переменные из .env файла
-dotenv.config();
 
 test('test', async ({ page }) => {
-  // Получаем данные из переменных окружения
-  const email = process.env.LOGIN; // Используем LOGIN вместо EMAIL
+  const email = process.env.LOGIN;
   const password = process.env.PASSWORD;
 
   if (!email || !password) {

@@ -1,18 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../../../page-objects/login-page';
 
-test.describe('Login Tests', () => {
-  test('Unsuccessful login with invalid credentials', async ({ page }) => {
-    await page.goto('https://monkkee.com/app#/');
+test('failure login test', async ({ page }) => {
+  const loginPage = new LoginPage(page);
+  await loginPage.goToLoginPage();
 
-    const emailInput = page.getByPlaceholder('Email address or alias');
-    const passwordInput = page.getByPlaceholder('Password');
-    const loginButton = page.getByRole('button', { name: 'Login' });
+  await loginPage.login(process.env.LOGIN!, process.env.PASSWORD1!);
 
-    await emailInput.fill('hellotms');
-    await passwordInput.fill('1234789tms');
-    await loginButton.click();
-
-    const errorMessage = page.locator('.alert.alert-danger');
-    await expect(errorMessage).toBeVisible({ timeout: 10000 });
-  });
+  const errorMessage = await page.locator('text=Login failed');
+  await expect(errorMessage).toBeVisible();
 });
