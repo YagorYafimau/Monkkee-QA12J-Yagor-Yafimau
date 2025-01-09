@@ -96,4 +96,57 @@ export class LoginPage {
     const today = new Date();
     return format(today, 'dd/MM/yyyy');
   }
+
+  async clickCreateNewEntryButton() {
+    await this.page.getByRole('link', { name: 'Create an entry' }).click();
+  }
+
+  async fillEntryText(text: string) {
+    await this.page.getByLabel('false').getByRole('paragraph').click();
+    await this.page.getByLabel('false').fill(text);
+  }
+
+  async saveEntry() {
+    await this.page.getByLabel('Exit edit mode').click();
+  }
+
+  async navigateBackToOverview() {
+    await this.page.getByRole('link', { name: 'Back to overview' }).click();
+  }
+
+  async getEntryByText(text: string): Promise<boolean> {
+    return (await this.page.locator(`text=${text}`).count()) > 0;
+  }
+
+  async selectEntryByText(text: string) {
+    await this.page
+      .locator(`text=${text}`)
+      .locator('..')
+      .locator('input[type="checkbox"]')
+      .check();
+  }
+
+  async deleteSelectedEntries() {
+    this.page.once('dialog', (dialog) => dialog.dismiss().catch(() => {}));
+    await this.page
+      .getByRole('link', { name: 'Delete selected entries' })
+      .click();
+  }
+
+  async getEntryTimestamp(): Promise<string> {
+    const timestampLocator = this.page.locator('div.full-date.ng-binding');
+    const timestamp = await timestampLocator.first().textContent();
+    if (timestamp) {
+      return timestamp.trim();
+    }
+    throw new Error('Timestamp is not available');
+  }
+
+  async deleteEntryByTimestamp(timestamp: string) {
+    const checkboxLocator = this.page.locator(
+      `div.full-date.ng-binding:has-text("${timestamp}") >> ../.. >> input[type="checkbox"]`
+    );
+    await checkboxLocator.check();
+    await this.deleteSelectedEntries();
+  }
 }
