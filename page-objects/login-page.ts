@@ -13,9 +13,6 @@ export class LoginPage {
   }
 
   async login(email: string, password: string) {
-    if (!email || !password) {
-      throw new Error('Login or password is not defined');
-    }
     await this.page.getByPlaceholder('Email address or alias').fill(email);
     await this.page.getByPlaceholder('Password').fill(password);
     await this.page.getByRole('button', { name: 'Login' }).click();
@@ -26,22 +23,15 @@ export class LoginPage {
     await userMenuLocator.waitFor({ state: 'visible', timeout: 20000 });
   }
 
-  async waitForEntriesPage() {
-    await this.page.waitForURL('https://monkkee.com/app/#/entries', {
-      timeout: 20000,
-    });
-  }
-
-  async getWelcomeMessage(): Promise<string> {
+  async getWelcomeMessage(): Promise<string | null> {
     const messageLocator: Locator = this.page.locator('#welcome-message');
-    await messageLocator.waitFor({ state: 'visible', timeout: 10000 });
     const content = await messageLocator.textContent();
-    return content || 'No welcome message found';
+    return content;
   }
 
   async openEntry() {
-    await this.page.waitForSelector('.entry');
-    await this.page.locator('.entry').first().click();
+    const entryLocator: Locator = this.page.locator('.entry').first();
+    await entryLocator.click();
   }
 
   async clickText(text: string) {
@@ -56,5 +46,15 @@ export class LoginPage {
 
   async clickOkButton() {
     await this.page.getByLabel('OK').click();
+  }
+
+  async clickWelcomeLink() {
+    await this.page
+      .locator('a', { hasText: 'Welcome to monkkee! We wish' })
+      .click();
+  }
+
+  async getWelcomeHeading(): Promise<Locator> {
+    return this.page.locator('h1', { hasText: 'Welcome to monkkee!' });
   }
 }

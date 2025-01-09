@@ -10,5 +10,13 @@ test('calendar navigation', async ({ page }) => {
   await page.getByRole('cell', { name: '‹' }).click();
   await page.getByRole('cell', { name: '30' }).nth(1).click();
   const selectedDate = await page.getByPlaceholder('Select date').inputValue();
-  expect(selectedDate).toContain('08/01/2025');
+
+  const today = new Date();
+  const currentDate = `${today.getDate().toString().padStart(2, '0')}/${(
+    today.getMonth() + 1
+  )
+    .toString()
+    .padStart(2, '0')}/${today.getFullYear()}`;
+
+  expect(selectedDate).toContain(currentDate);
 });

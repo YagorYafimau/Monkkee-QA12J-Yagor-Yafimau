@@ -7,11 +7,8 @@ test('Welcome message test', async ({ page }) => {
   await loginPage.goToLoginPage();
   await loginPage.login(process.env.LOGIN!, process.env.PASSWORD!);
 
-  const welcomeLink = await page.locator('a', {
-    hasText: 'Welcome to monkkee! We wish',
-  });
-  await welcomeLink.click();
+  await loginPage.clickWelcomeLink();
 
-  const heading = await page.locator('h1', { hasText: 'Welcome to monkkee!' });
+  const heading = await loginPage.getWelcomeHeading();
   await expect(heading).toBeVisible();
 });
