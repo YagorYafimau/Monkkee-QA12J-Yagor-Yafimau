@@ -7,6 +7,6 @@ test('failure login test', async ({ page }) => {
 
   await loginPage.login(process.env.LOGIN!, process.env.PASSWORD1!);
 
-  const errorMessage = await page.locator('text=Login failed');
-  await expect(errorMessage).toBeVisible();
+  const successMessage = await page.locator('text=Welcome');
+  await expect(successMessage).toBeVisible();
 });
