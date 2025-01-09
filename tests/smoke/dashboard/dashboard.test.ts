@@ -7,11 +7,7 @@ test('Dashboard page after login', async ({ page }) => {
   const dashboardPage = new DashboardPage(page);
 
   await loginPage.goToLoginPage();
-
-  const login = process.env.LOGIN;
-  const password = process.env.PASSWORD;
-
-  await loginPage.login(login!, password!);
+  await loginPage.login(process.env.LOGIN!, process.env.PASSWORD!);
 
   await dashboardPage.waitForSettingsButton();
   const isEnabled = await dashboardPage.isSettingsButtonEnabled();

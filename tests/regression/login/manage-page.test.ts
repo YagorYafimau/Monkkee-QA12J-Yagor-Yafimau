@@ -6,8 +6,7 @@ test('Login and navigate to tags page', async ({ page }) => {
 
   await loginPage.goToLoginPage();
   await loginPage.login(process.env.LOGIN!, process.env.PASSWORD!);
-
-  await page.getByRole('link', { name: 'Manage tags' }).click();
+  await loginPage.navigateToManageTags();
 
   await expect(page).toHaveURL(/\/tags$/);
 });
