@@ -10,7 +10,7 @@ export class LoginPage {
   }
 
   async goToLoginPage() {
-    await this.page.goto('https://monkkee.com/app#/');
+    await this.page.goto('https://monkkee.com/app#/'); // Переход на страницу логина
   }
 
   async login(email: string, password: string) {
@@ -148,5 +148,10 @@ export class LoginPage {
     );
     await checkboxLocator.check();
     await this.deleteSelectedEntries();
+  }
+
+  async navigateToEntriesPage() {
+    await this.page.goto('https://monkkee.com/app#/entries');
+    await this.page.waitForLoadState('networkidle');
   }
 }
