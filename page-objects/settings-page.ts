@@ -3,13 +3,18 @@ import { Page } from '@playwright/test';
 export class SettingsPage {
   constructor(private page: Page) {}
 
-  async goToSettings() {
-    await this.page.getByRole('link', { name: 'Settings' }).click();
-  }
-
   async changeLanguage(language: 'pt' | 'en') {
     await this.page.getByRole('combobox').selectOption(language);
     await this.page.getByRole('button', { name: 'OK' }).click();
+  }
+
+  async getBodyText() {
+    return await this.page.locator('body').textContent();
+  }
+
+  async waitForNotification(text: string) {
+    const notificationText = await this.page.locator(`text=${text}`);
+    await notificationText.waitFor({ state: 'visible' });
   }
 
   async changeColourScheme(scheme: 'light' | 'dark') {
@@ -22,10 +27,5 @@ export class SettingsPage {
     await this.page.getByRole('link', { name: 'Inactivity timeout' }).click();
     await this.page.getByRole('combobox').selectOption(timeout);
     await this.page.getByRole('button', { name: 'OK' }).click();
-  }
-
-  async waitForNotification(text: string) {
-    const notificationText = await this.page.locator(`text=${text}`);
-    await notificationText.waitFor({ state: 'visible' });
   }
 }

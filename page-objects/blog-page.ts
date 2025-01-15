@@ -4,47 +4,58 @@ export class BlogPage {
   constructor(private page: Page) {}
 
   async goToBlogPage() {
-    await this.page.getByRole('link', { name: 'Blog' }).click();
-    const page1Promise = this.page.waitForEvent('popup');
-    const page1 = await page1Promise;
-    return page1;
+    const [newPage] = await Promise.all([
+      this.page.waitForEvent('popup'),
+      this.page.getByRole('link', { name: 'Blog' }).click(),
+    ]);
+
+    this.page = newPage;
+    await this.page.waitForLoadState();
   }
 
-  async clickFirstContinueLink(page1: Page) {
-    await page1.locator('.blog__continue-link').first().click();
+  async clickFirstContinueLink() {
+    await this.page.waitForSelector('.blog__continue-link', {
+      state: 'visible',
+      timeout: 15000,
+    });
+    const continueLink = this.page.locator('.blog__continue-link').first();
+
+    if (await continueLink.isVisible()) {
+      await continueLink.click();
+    } else {
+      throw new Error('Continue link is not visible on the page');
+    }
   }
 
-  async clickHeading(page1: Page) {
-    await page1.locator('h2').first().click();
+  async goBackToOverview() {
+    await this.page.getByRole('link', { name: '← Back to overview' }).click();
   }
 
-  async goBackToOverview(page1: Page) {
-    await page1.getByRole('link', { name: '← Back to overview' }).click();
+  async goToFeaturesPage() {
+    await this.page.getByRole('link', { name: 'Features' }).click();
   }
 
-  async goToFeaturesPage(page1: Page) {
-    await page1.getByRole('link', { name: 'Features' }).click();
-  }
-
-  async clickFeaturesHeading(page1: Page) {
-    await page1
-      .getByRole('heading', { name: 'monkkee’s features - no bells' })
+  async clickFeaturesHeading() {
+    await this.page
+      .getByRole('heading', {
+        name: 'monkkee’s features - no bells and whistles, plain functionality',
+      })
       .click();
   }
 
-  async goToSecurityPage(page1: Page) {
-    await page1.getByRole('link', { name: 'Security', exact: true }).click();
+  async goToSecurityPage() {
+    await this.page
+      .getByRole('link', { name: 'Security', exact: true })
+      .click();
   }
 
-  async clickSecurityHeading(page1: Page) {
-    await page1
+  async clickSecurityHeading() {
+    await this.page
       .getByRole('heading', { name: 'Secure end-to-end encryption' })
       .click();
   }
 
-  async checkHeadingText(page1: Page, expectedText: string) {
-    const headingText = await page1.locator('h2').first().textContent();
-    console.log('headingText:', headingText);
-    return headingText?.trim() === expectedText;
+  get headingText() {
+    return this.page.locator('h2').first();
   }
 }

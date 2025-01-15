@@ -1,32 +1,28 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage } from '../../../page-objects/login-page';
 import { ManageTagsPage } from '../../../page-objects/managetagspage';
+import { DashboardPage } from '../../../page-objects/dashboard-page';
+import { EntryPage } from '../../../page-objects/entry-page';
 
 test('Create and verify a tag', async ({ page }) => {
   const loginPage = new LoginPage(page);
   const manageTagsPage = new ManageTagsPage(page);
+  const dashboardPage = new DashboardPage(page);
+  const entryPage = new EntryPage(page);
 
   await loginPage.goToLoginPage();
   const email = process.env.LOGIN!;
   const password = process.env.PASSWORD!;
   await loginPage.login(email, password);
 
-  await loginPage.clickCreateNewEntryButton();
-  await loginPage.fillEntryText('Тэг');
-  await loginPage.saveEntry();
+  await entryPage.clickCreateNewEntryButton();
+  await entryPage.fillEntryText('Тэг');
+  await entryPage.saveEntry();
 
-  const tagInput = page.locator('#new-tag');
-  await tagInput.fill('123');
-  const okButton = page.locator('#assign-new-tag');
-  await okButton.click();
+  await manageTagsPage.createNewTag('123');
+  await manageTagsPage.goBackToOverview();
 
-  const backButton = page.locator('#back-to-overview');
-  await backButton.click();
-
-  await loginPage.navigateToEntriesPage();
-
-  await manageTagsPage.goToTagsPage();
-
+  await dashboardPage.goToTagsPage();
   const tag = page.locator('td.tag.ng-binding', { hasText: '123' });
   await tag.waitFor({ state: 'visible', timeout: 15000 });
 
