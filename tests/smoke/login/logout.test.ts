@@ -1,19 +1,17 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../../../page-objects/login-page';
+import { LogoutPage } from '../../../page-objects/logout-page';
 
 test('User can log in and log out successfully', async ({ page }) => {
-  await page.goto('https://monkkee.com/app#/');
+  const loginPage = new LoginPage(page);
+  const logoutPage = new LogoutPage(page);
 
-  await page
-    .getByPlaceholder('Email address or alias')
-    .fill(process.env.LOGIN!);
-  await page.getByPlaceholder('Password').fill(process.env.PASSWORD!);
-  await page.getByRole('button', { name: 'Login' }).click();
+  await loginPage.goToLoginPage();
+  await loginPage.login(process.env.LOGIN!, process.env.PASSWORD!);
 
-  const logoutButton = await page.getByRole('button', { name: 'Logout' });
-  await expect(logoutButton).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Logout' })).toBeVisible();
 
-  await logoutButton.click();
+  await logoutPage.logout();
 
-  const loginButton = await page.getByRole('button', { name: 'Login' });
-  await expect(loginButton).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
 });

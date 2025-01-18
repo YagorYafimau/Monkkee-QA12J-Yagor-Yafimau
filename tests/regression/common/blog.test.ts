@@ -21,8 +21,18 @@ test('Blog page test', async ({ page }) => {
   await blogPage.goBackToOverview();
 
   await blogPage.goToFeaturesPage();
+  await expect(
+    blogPage.page.getByRole('heading', {
+      name: 'monkkee’s features - no bells and whistles, plain functionality',
+    })
+  ).toBeInViewport();
   await blogPage.clickFeaturesHeading();
 
   await blogPage.goToSecurityPage();
+  await expect(
+    blogPage.page.getByRole('heading', {
+      name: 'Secure end-to-end encryption',
+    })
+  ).toBeInViewport();
   await blogPage.clickSecurityHeading();
 });

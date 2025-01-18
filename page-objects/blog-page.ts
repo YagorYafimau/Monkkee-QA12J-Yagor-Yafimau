@@ -2,7 +2,7 @@ import { Page } from '@playwright/test';
 
 export class BlogPage {
   private continueLinkSelector = '.blog__continue-link';
-  constructor(private page: Page) {}
+  constructor(public page: Page) {}
 
   async goToBlogPage() {
     await this.page.getByRole('link', { name: 'Blog' }).click();

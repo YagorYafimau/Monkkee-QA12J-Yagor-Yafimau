@@ -1,12 +1,14 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
 name: Playwright E2E tests
 
 on:
   pull_request:
     branches: ['feature/smoke-regression']
   workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Choose browser (chromium, firefox, webkit)'
+        required: false
+        default: 'chromium'
 
 jobs:
   build:
@@ -15,7 +17,9 @@ jobs:
     strategy:
       matrix:
         node-version: [20.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        # Add matrix for browser selection
+        browser: [${{ github.event.inputs.browser || 'chromium' }}]
+        # Supported browsers: chromium, firefox, webkit
 
     steps:
       - uses: actions/checkout@v4
@@ -24,9 +28,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      - name: Setup Chrome
+      - name: Setup Browser
         uses: browser-actions/setup-chrome@v1.7.2
+        with:
+          browser: ${{ matrix.browser }} # Pass the selected browser to the setup step
 
       - run: npm install
-      - run: npx playwright install
-      - run: npm run test
+      - run: npx playwright install ${{ matrix.browser }}  # Install the selected browser
+      - run: npm run test -- --project=${{ matrix.browser }}  # Pass the browser as an argument to your test script

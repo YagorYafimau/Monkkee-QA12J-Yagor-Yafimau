@@ -1,4 +1,5 @@
 import { Page, Locator } from 'playwright';
+import { format } from 'date-fns';
 
 export class DashboardPage {
   private page: Page;
@@ -17,8 +18,13 @@ export class DashboardPage {
     this.tagsPageLink = this.page.locator('.tags__manage-link');
   }
 
+  // Геттер для settingsButton
+  get settingsButtonLocator(): Locator {
+    return this.settingsButton;
+  }
+
   async waitForSettingsButton() {
-    await this.settingsButton.waitFor({ state: 'visible', timeout: 60000 });
+    await this.settingsButton.waitFor({ state: 'visible' });
   }
 
   async isSettingsButtonEnabled(): Promise<boolean> {
@@ -36,13 +42,34 @@ export class DashboardPage {
 
   async goToSettings() {
     await this.settingsButton.click();
-    await this.page.waitForURL('**/settings/locale', { timeout: 20000 });
+    await this.page.waitForURL('**/settings/locale');
   }
 
-  async goToTagsPage() {
+  async openCalendar() {
+    await this.page.getByPlaceholder('Select date').click();
+  }
+
+  async navigateToPreviousMonth() {
+    await this.page.getByRole('cell', { name: '‹' }).click();
+  }
+
+  async selectDate(date: string) {
+    await this.page.getByRole('cell', { name: date }).nth(1).click();
+  }
+
+  async getSelectedDate(): Promise<string> {
+    return await this.page.getByPlaceholder('Select date').inputValue();
+  }
+
+  async getCurrentDate(): Promise<string> {
+    const today = new Date();
+    return format(today, 'dd/MM/yyyy');
+  }
+
+  async goToManageTagsPage() {
     await this.tagsPageLink.click();
     await this.page
       .locator('h1:has-text("Tags")')
-      .waitFor({ state: 'visible', timeout: 20000 });
+      .waitFor({ state: 'visible' });
   }
 }

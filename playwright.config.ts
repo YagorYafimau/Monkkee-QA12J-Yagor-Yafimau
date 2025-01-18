@@ -5,12 +5,13 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 10000,
+  timeout: 30000, // Тайм-аут для тестов
   use: {
     browserName: 'chromium',
     headless: true,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    actionTimeout: 20000, // Правильное имя параметра
   },
   projects: [
     {

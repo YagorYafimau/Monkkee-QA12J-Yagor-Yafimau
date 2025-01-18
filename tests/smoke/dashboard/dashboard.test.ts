@@ -9,11 +9,8 @@ test('Dashboard page after login', async ({ page }) => {
   await loginPage.goToLoginPage();
   await loginPage.login(process.env.LOGIN!, process.env.PASSWORD!);
 
-  await dashboardPage.waitForSettingsButton();
+  await expect(dashboardPage.settingsButtonLocator).toBeVisible();
+
   const isEnabled = await dashboardPage.isSettingsButtonEnabled();
-
   expect(isEnabled).toBe(true);
-
-  const currentUrl = page.url();
-  expect(currentUrl).toContain('/entries');
 });

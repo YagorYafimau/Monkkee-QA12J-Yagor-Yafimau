@@ -24,12 +24,4 @@ export class ManageTagsPage {
   async goBackToOverview() {
     await this.backButton.click();
   }
-
-  async openTagsPage() {
-    const manageTagsLink = this.page.locator('.tags__manage-link');
-    await manageTagsLink.click();
-    await this.page
-      .locator('h1:has-text("Tags")')
-      .waitFor({ state: 'visible', timeout: 20000 });
-  }
 }
