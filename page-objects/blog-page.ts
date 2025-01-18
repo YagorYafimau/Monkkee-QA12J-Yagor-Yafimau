@@ -1,30 +1,24 @@
 import { Page } from '@playwright/test';
 
 export class BlogPage {
+  private continueLinkSelector = '.blog__continue-link';
   constructor(private page: Page) {}
 
   async goToBlogPage() {
-    const [newPage] = await Promise.all([
-      this.page.waitForEvent('popup'),
-      this.page.getByRole('link', { name: 'Blog' }).click(),
-    ]);
+    await this.page.getByRole('link', { name: 'Blog' }).click();
+    const newPage = await this.page.waitForEvent('popup');
 
     this.page = newPage;
     await this.page.waitForLoadState();
   }
 
   async clickFirstContinueLink() {
-    await this.page.waitForSelector('.blog__continue-link', {
+    await this.page.waitForSelector(this.continueLinkSelector, {
       state: 'visible',
       timeout: 15000,
     });
-    const continueLink = this.page.locator('.blog__continue-link').first();
 
-    if (await continueLink.isVisible()) {
-      await continueLink.click();
-    } else {
-      throw new Error('Continue link is not visible on the page');
-    }
+    await this.page.locator(this.continueLinkSelector).first().click();
   }
 
   async goBackToOverview() {
