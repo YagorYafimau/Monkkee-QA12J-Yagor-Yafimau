@@ -22,7 +22,6 @@ test('Create and verify a tag', async ({ page }) => {
   await manageTagsPage.createNewTag('123');
   await manageTagsPage.goBackToOverview();
 
-  // Используем метод goToManageTagsPage из DashboardPage для перехода на страницу тегов
   await dashboardPage.goToManageTagsPage();
   const tag = page.locator('td.tag.ng-binding', { hasText: '123' });
   await tag.waitFor({ state: 'visible', timeout: 15000 });

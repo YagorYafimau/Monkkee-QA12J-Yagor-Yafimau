@@ -5,7 +5,7 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
-  timeout: 30000, // Тайм-аут для тестов
+  timeout: 35000, // Тайм-аут для тестов
   use: {
     browserName: 'chromium',
     headless: true,

@@ -4,14 +4,6 @@ export class BlogPage {
   private continueLinkSelector = '.blog__continue-link';
   constructor(public page: Page) {}
 
-  async goToBlogPage() {
-    await this.page.getByRole('link', { name: 'Blog' }).click();
-    const newPage = await this.page.waitForEvent('popup');
-
-    this.page = newPage;
-    await this.page.waitForLoadState();
-  }
-
   async clickFirstContinueLink() {
     await this.page.waitForSelector(this.continueLinkSelector, {
       state: 'visible',

@@ -11,28 +11,33 @@ test('Blog page test', async ({ page }) => {
   const password = process.env.PASSWORD!;
   await loginPage.login(email, password);
 
-  await blogPage.goToBlogPage();
-  await blogPage.clickFirstContinueLink();
+  // Переход на страницу блога
+  await page.getByRole('link', { name: 'Blog' }).click();
+  const blogPageHandle = await page.waitForEvent('popup');
+  await blogPageHandle.waitForLoadState();
 
-  await expect(blogPage.headingText).toHaveText(
+  const blogPageInstance = new BlogPage(blogPageHandle);
+  await blogPageInstance.clickFirstContinueLink();
+
+  await expect(blogPageInstance.headingText).toHaveText(
     'monkkee’s user interface is now available in Spanish - Help us improve it by participating in the translation process'
   );
 
-  await blogPage.goBackToOverview();
+  await blogPageInstance.goBackToOverview();
 
-  await blogPage.goToFeaturesPage();
+  await blogPageInstance.goToFeaturesPage();
   await expect(
-    blogPage.page.getByRole('heading', {
+    blogPageHandle.getByRole('heading', {
       name: 'monkkee’s features - no bells and whistles, plain functionality',
     })
   ).toBeInViewport();
-  await blogPage.clickFeaturesHeading();
+  await blogPageInstance.clickFeaturesHeading();
 
-  await blogPage.goToSecurityPage();
+  await blogPageInstance.goToSecurityPage();
   await expect(
-    blogPage.page.getByRole('heading', {
+    blogPageHandle.getByRole('heading', {
       name: 'Secure end-to-end encryption',
     })
   ).toBeInViewport();
-  await blogPage.clickSecurityHeading();
+  await blogPageInstance.clickSecurityHeading();
 });

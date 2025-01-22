@@ -1,5 +1,4 @@
 import { Page, Locator } from 'playwright';
-import { format } from 'date-fns';
 
 export class DashboardPage {
   private page: Page;
@@ -18,7 +17,6 @@ export class DashboardPage {
     this.tagsPageLink = this.page.locator('.tags__manage-link');
   }
 
-  // Геттер для settingsButton
   get settingsButtonLocator(): Locator {
     return this.settingsButton;
   }
@@ -59,11 +57,6 @@ export class DashboardPage {
 
   async getSelectedDate(): Promise<string> {
     return await this.page.getByPlaceholder('Select date').inputValue();
-  }
-
-  async getCurrentDate(): Promise<string> {
-    const today = new Date();
-    return format(today, 'dd/MM/yyyy');
   }
 
   async goToManageTagsPage() {
