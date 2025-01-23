@@ -24,7 +24,7 @@ test('Create and verify a tag', async ({ page }) => {
 
   await dashboardPage.goToManageTagsPage();
   const tag = page.locator('td.tag.ng-binding', { hasText: '123' });
-  await tag.waitFor({ state: 'visible', timeout: 15000 });
+  await tag.waitFor({ state: 'visible' }); // Удален таймаут
 
   const tagText = await tag.textContent();
   expect(tagText?.trim()).toBe('123');

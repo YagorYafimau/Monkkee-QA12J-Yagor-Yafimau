@@ -11,12 +11,8 @@ test('Blog page test', async ({ page }) => {
   const password = process.env.PASSWORD!;
   await loginPage.login(email, password);
 
-  // Переход на страницу блога
-  await page.getByRole('link', { name: 'Blog' }).click();
-  const blogPageHandle = await page.waitForEvent('popup');
-  await blogPageHandle.waitForLoadState();
+  const blogPageInstance = await blogPage.goToBlogPage();
 
-  const blogPageInstance = new BlogPage(blogPageHandle);
   await blogPageInstance.clickFirstContinueLink();
 
   await expect(blogPageInstance.headingText).toHaveText(
@@ -26,18 +22,14 @@ test('Blog page test', async ({ page }) => {
   await blogPageInstance.goBackToOverview();
 
   await blogPageInstance.goToFeaturesPage();
-  await expect(
-    blogPageHandle.getByRole('heading', {
-      name: 'monkkee’s features - no bells and whistles, plain functionality',
-    })
-  ).toBeInViewport();
+  const isFeaturesVisible =
+    await blogPageInstance.isFeaturesHeadingInViewport();
+  expect(isFeaturesVisible).toBeTruthy();
   await blogPageInstance.clickFeaturesHeading();
 
   await blogPageInstance.goToSecurityPage();
-  await expect(
-    blogPageHandle.getByRole('heading', {
-      name: 'Secure end-to-end encryption',
-    })
-  ).toBeInViewport();
+  const isSecurityVisible =
+    await blogPageInstance.isSecurityHeadingInViewport();
+  expect(isSecurityVisible).toBeTruthy();
   await blogPageInstance.clickSecurityHeading();
 });

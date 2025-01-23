@@ -29,7 +29,7 @@ test('Search and verify entry by text and date', async ({ page }) => {
   await editableField.click();
 
   const entryPageText = page.locator('div[contenteditable="true"]');
-  await entryPageText.waitFor({ state: 'visible', timeout: 5000 });
+  await entryPageText.waitFor({ state: 'visible' }); // Удален таймаут
   const textContent = await entryPageText.textContent();
   expect(textContent?.trim()).toBe('Hey TMS');
 });

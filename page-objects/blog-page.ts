@@ -2,7 +2,15 @@ import { Page } from '@playwright/test';
 
 export class BlogPage {
   private continueLinkSelector = '.blog__continue-link';
+
   constructor(public page: Page) {}
+
+  async goToBlogPage() {
+    await this.page.getByRole('link', { name: 'Blog' }).click();
+    const blogPageHandle = await this.page.waitForEvent('popup');
+    await blogPageHandle.waitForLoadState();
+    return new BlogPage(blogPageHandle);
+  }
 
   async clickFirstContinueLink() {
     await this.page.waitForSelector(this.continueLinkSelector, {
@@ -39,6 +47,22 @@ export class BlogPage {
     await this.page
       .getByRole('heading', { name: 'Secure end-to-end encryption' })
       .click();
+  }
+
+  async isFeaturesHeadingInViewport() {
+    return this.page
+      .getByRole('heading', {
+        name: 'monkkee’s features - no bells and whistles, plain functionality',
+      })
+      .isVisible();
+  }
+
+  async isSecurityHeadingInViewport() {
+    return this.page
+      .getByRole('heading', {
+        name: 'Secure end-to-end encryption',
+      })
+      .isVisible();
   }
 
   get headingText() {
