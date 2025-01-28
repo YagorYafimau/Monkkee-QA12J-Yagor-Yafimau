@@ -1,0 +1,38 @@
+name: Playwright E2E tests
+
+on:
+  pull_request:
+    branches: ['feature/smoke-regression']
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Choose browser (chromium, firefox, webkit)'
+        required: false
+        default: 'chromium'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+        # Add matrix for browser selection
+        browser: [${{ github.event.inputs.browser || 'chromium' }}]
+        # Supported browsers: chromium, firefox, webkit
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Setup Browser
+        uses: browser-actions/setup-chrome@v1.7.2
+        with:
+          browser: ${{ matrix.browser }} # Pass the selected browser to the setup step
+
+      - run: npm install
+      - run: npx playwright install ${{ matrix.browser }}  # Install the selected browser
+      - run: npm run test -- --project=${{ matrix.browser }}  # Pass the browser as an argument to your test script
