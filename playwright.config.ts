@@ -1,12 +1,29 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export default defineConfig({
-  testDir: './tests', // Путь к папке с тестами
-  timeout: 30000, // Тайм-аут на выполнение тестов
+  testDir: './tests',
+  timeout: 35000, // Тайм-аут для тестов
   use: {
-    browserName: 'chromium', // Выбор браузера
-    headless: true, // Запуск в headless режиме
+    browserName: 'chromium',
+    headless: true,
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    actionTimeout: 20000, // Правильное имя параметра
   },
+  projects: [
+    {
+      name: 'Smoke Tests - Chromium',
+      testMatch: '**/smoke/**/*.test.ts',
+      use: { browserName: 'chromium' },
+    },
+    {
+      name: 'Regression Tests - Chromium',
+      testMatch: '**/regression/**/*.test.ts',
+      use: { browserName: 'chromium' },
+    },
+  ],
+  reporter: [['html', { outputFolder: 'playwright-report', open: 'never' }]],
 });
