@@ -5,4 +5,3 @@ test-results
 *.png
 *.txt
 playwright-report
-login-failure.test.ts 
