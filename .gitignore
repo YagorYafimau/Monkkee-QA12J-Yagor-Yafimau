@@ -1,4 +1,7 @@
 node_modules/
-.en
 dist/
 .log
+test-results
+*.png
+*.txt
+playwright-report
